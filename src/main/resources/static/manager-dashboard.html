@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Manager Dashboard - EMS</title>
+    <link rel="stylesheet" href="css/manager-dashboard.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .layout {
+            display: flex;
+            width: 100%;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: #1a1a2e;
+            color: white;
+            padding: 25px 20px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+
+        .sidebar h2 {
+            color: #fff;
+            margin-bottom: 40px;
+            font-size: 24px;
+            text-align: center;
+            border-bottom: 2px solid #4cc9f0;
+            padding-bottom: 15px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            padding: 15px 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar li:hover {
+            background: #4cc9f0;
+            transform: translateX(10px);
+        }
+
+        .sidebar li.active {
+            background: #4cc9f0;
+            font-weight: bold;
+        }
+
+        /* Main Content */
+        .content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 30px;
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .topbar span {
+            font-size: 22px;
+            font-weight: 600;
+            color: #2d3436;
+        }
+
+        .topbar .datetime {
+            font-size: 14px;
+            color: #636e72;
+            background: #f8f9fa;
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid #dfe6e9;
+        }
+
+        /* Dashboard Sections */
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .section-header h2 {
+            color: #2d3436;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .primary-btn {
+            background: linear-gradient(45deg, #4cc9f0, #4361ee);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+        }
+
+        /* Cards */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s;
+            border-left: 5px solid #4cc9f0;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            color: #636e72;
+            font-size: 16px;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .card p {
+            color: #2d3436;
+            font-size: 36px;
+            font-weight: 700;
+        }
+
+        /* Tables */
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            background: linear-gradient(45deg, #4361ee, #4cc9f0);
+            color: white;
+            padding: 20px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .data-table td {
+            padding: 18px 15px;
+            border-bottom: 1px solid #f1f2f6;
+            color: #2d3436;
+        }
+
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Status Badges */
+        .status {
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status.active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status.inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Buttons */
+        .btn-assign {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-assign:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+
+        .btn-assign:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-view {
+            background: #17a2b8;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-view:hover {
+            background: #138496;
+            transform: translateY(-1px);
+        }
+
+        /* Search Box */
+        .search-box {
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 14px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            border-color: #4cc9f0;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(76, 201, 240, 0.1);
+        }
+
+        /* No Data Message */
+        .no-data {
+            text-align: center;
+            padding: 60px 20px;
+            color: #636e72;
+            font-size: 16px;
+        }
+
+        .no-data i {
+            font-size: 48px;
+            margin-bottom: 20px;
+            display: block;
+            color: #b2bec3;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #636e72;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4cc9f0;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-content h3 {
+            margin-bottom: 20px;
+            color: #2d3436;
+        }
+
+        .modal-content input,
+        .modal-content textarea,
+        .modal-content select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .modal-actions button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .modal-actions button:first-child {
+            background: #f1f2f6;
+            color: #2d3436;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 220px;
+            }
+
+            .content {
+                margin-left: 220px;
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .content {
+                margin-left: 0;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .data-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="layout">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <h2>EMS Manager</h2>
+            <ul>
+                <li onclick="showSection('dashboard')" class="active">📊 Dashboard</li>
+                <li onclick="showSection('employees')">👥 Employees</li>
+                <li onclick="showSection('duty')">📋 Assign Duty</li>
+                <li onclick="showSection('leaves')">📝 Leaves</li>
+                <li onclick="logout()">🚪 Logout</li>
+            </ul>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="content">
+            <header class="topbar">
+                <span id="welcomeMessage">Welcome, Manager</span>
+                <div class="datetime" id="datetime">Loading...</div>
+            </header>
+
+            <!-- DASHBOARD -->
+            <section id="dashboard" class="section active">
+                <div class="cards">
+                    <div class="card">
+                        <h3>Total Employees</h3>
+                        <p id="employeeCount">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Active Employees</h3>
+                        <p id="activeEmployeeCount">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Pending Leaves</h3>
+                        <p id="pendingLeavesCount">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Tasks Today</h3>
+                        <p id="tasksCount">0</p>
+                    </div>
+                </div>
+                <div class="section-header">
+                    <h2>Recent Activities</h2>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Activity</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="activitiesTable">
+                            <tr>
+                                <td colspan="4" class="no-data"><i>📊</i>No recent activities</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- EMPLOYEES -->
+            <section id="employees" class="section">
+                <div class="section-header">
+                    <h2>My Employees</h2>
+                    <div class="search-box"><input type="text" id="employeeSearch"
+                            placeholder="Search employees..."><button class="primary-btn"
+                            onclick="searchEmployees()">Search</button></div>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Department</th>
+                                <th>Status</th>
+                                <th>Contact</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employeeTable">
+                            <tr>
+                                <td colspan="7" class="loading">
+                                    <div class="spinner"></div>Loading employees...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ASSIGN DUTY -->
+            <section id="duty" class="section">
+                <div class="section-header">
+                    <h2>Assign Duty</h2>
+                    <button class="primary-btn" onclick="openDutyModal()">+ Assign New Duty</button>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Duty ID</th>
+                                <th>Employee</th>
+                                <th>Duty Title</th>
+                                <th>Description</th>
+                                <th>Target Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dutyTable">
+                            <tr>
+                                <td colspan="6" class="no-data"><i>📋</i>No duties assigned yet</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ASSIGN DUTY MODAL -->
+            <div id="dutyModal" class="modal">
+                <div class="modal-content">
+                    <h3>Assign New Duty</h3>
+                    <div class="form-group">
+                        <label>Select Employee:</label>
+                        <select id="dutyEmployeeSelect" required
+                            style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option value="">-- Select Employee --</option>
+                        </select>
+                    </div>
+                    <input id="dutyTitle" placeholder="Duty Title" required
+                        style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                    <textarea id="dutyDesc" placeholder="Description" required
+                        style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px; min-height: 80px;"></textarea>
+                    <input id="dutyDate" type="date" required
+                        style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px;">
+
+                    <div class="modal-actions">
+                        <button onclick="closeDutyModal()">Cancel</button>
+                        <button class="primary-btn" onclick="assignDuty()">Assign</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- APPRAISAL MODAL -->
+            <div id="appraisalModal" class="modal">
+                <div class="modal-content">
+                    <h3>Rate Employee</h3>
+                    <input type="hidden" id="appraisalEmpId">
+                    <div class="form-group">
+                        <label>Rating (1-5 Stars):</label>
+                        <div style="font-size: 30px; color: #ccc; margin-bottom: 15px;">
+                            <span onclick="setRating(1)" style="cursor: pointer;" class="star-rating"
+                                id="star1">★</span>
+                            <span onclick="setRating(2)" style="cursor: pointer;" class="star-rating"
+                                id="star2">★</span>
+                            <span onclick="setRating(3)" style="cursor: pointer;" class="star-rating"
+                                id="star3">★</span>
+                            <span onclick="setRating(4)" style="cursor: pointer;" class="star-rating"
+                                id="star4">★</span>
+                            <span onclick="setRating(5)" style="cursor: pointer;" class="star-rating"
+                                id="star5">★</span>
+                            <span id="ratingValue"
+                                style="font-size: 16px; color: #333; margin-left: 10px; vertical-align: middle;">0/5</span>
+                        </div>
+                    </div>
+                    <textarea id="appraisalFeedback" placeholder="Enter monthly feedback..." required
+                        style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px; min-height: 100px;"></textarea>
+
+                    <div class="modal-actions">
+                        <button onclick="closeAppraisalModal()">Cancel</button>
+                        <button class="primary-btn" onclick="submitAppraisal()">Submit Rating</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LEAVES -->
+            <section id="leaves" class="section">
+                <div class="section-header">
+                    <h2>Leave Applications</h2>
+                    <div class="search-box"><input type="text" id="leaveSearch" placeholder="Search leaves..."><button
+                            class="primary-btn" onclick="searchLeaves()">Search</button></div>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Leave Type</th>
+                                <th>From Date</th>
+                                <th>To Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaveTable">
+                            <tr>
+                                <td colspan="6" class="no-data"><i>📝</i>No leave applications</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="js/manager-dashboard.js"></script>
+    <script>
+        function updateDateTime() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            document.getElementById('datetime').textContent = now.toLocaleDateString('en-IN', options);
+        }
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,80 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+}
+
+.layout {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 220px;
+    background: #0d5bd8;
+    color: white;
+    padding: 20px;
+}
+
+.sidebar h2 {
+    text-align: center;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar li {
+    padding: 12px;
+    cursor: pointer;
+}
+
+.sidebar li:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+.content {
+    flex: 1;
+}
+
+.topbar {
+    background: white;
+    padding: 15px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+}
+
+.section {
+    display: none;
+    padding: 20px;
+}
+
+.section.active {
+    display: block;
+}
+
+table {
+    width: 100%;
+    background: white;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+input, textarea {
+    display: block;
+    width: 300px;
+    margin: 10px 0;
+    padding: 8px;
+}
+
+button {
+    padding: 8px 15px;
+    background: #0d5bd8;
+    color: white;
+    border: none;
+    cursor: pointer;
+}

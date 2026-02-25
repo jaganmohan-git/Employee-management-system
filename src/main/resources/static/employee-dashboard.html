@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Employee Dashboard - EMS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .layout {
+            display: flex;
+            width: 100%;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: #1a1a2e;
+            color: white;
+            padding: 25px 20px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+
+        .sidebar h2 {
+            color: #fff;
+            margin-bottom: 40px;
+            font-size: 24px;
+            text-align: center;
+            border-bottom: 2px solid #38ef7d;
+            padding-bottom: 15px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            padding: 15px 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar li:hover {
+            background: #38ef7d;
+            color: #1a1a2e;
+            transform: translateX(10px);
+        }
+
+        .sidebar li.active {
+            background: #38ef7d;
+            color: #1a1a2e;
+            font-weight: bold;
+        }
+
+        /* Main Content */
+        .content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 30px;
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .topbar span {
+            font-size: 22px;
+            font-weight: 600;
+            color: #2d3436;
+        }
+
+        .topbar .datetime {
+            font-size: 14px;
+            color: #636e72;
+            background: #f8f9fa;
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid #dfe6e9;
+        }
+
+        /* Dashboard Sections */
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .section-header h2 {
+            color: #2d3436;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .primary-btn {
+            background: linear-gradient(45deg, #11998e, #38ef7d);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(56, 239, 125, 0.4);
+        }
+
+        /* Cards */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s;
+            border-left: 5px solid #38ef7d;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            color: #636e72;
+            font-size: 16px;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .card p {
+            color: #2d3436;
+            font-size: 24px;
+            font-weight: 700;
+            word-break: break-all;
+        }
+
+        /* Tables */
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            background: linear-gradient(45deg, #11998e, #38ef7d);
+            color: white;
+            padding: 20px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .data-table td {
+            padding: 18px 15px;
+            border-bottom: 1px solid #f1f2f6;
+            color: #2d3436;
+        }
+
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Status Badges */
+        .status {
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status.active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status.inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* No Data Message */
+        .no-data {
+            text-align: center;
+            padding: 60px 20px;
+            color: #636e72;
+            font-size: 16px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #636e72;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #38ef7d;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-content h3 {
+            margin-bottom: 20px;
+            color: #2d3436;
+        }
+
+        .modal-content input,
+        .modal-content textarea,
+        .modal-content select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .modal-actions button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .modal-actions button:first-child {
+            background: #f1f2f6;
+            color: #2d3436;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="layout">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <h2>EMS Employee</h2>
+            <ul>
+                <li onclick="showSection('dashboard')" class="active">👤 Profile</li>
+                <li onclick="showSection('performance')">⭐ Performance</li>
+                <li onclick="showSection('payslips')">💰 My Payslips</li>
+                <li onclick="showSection('duties')">📋 My Tasks</li>
+                <li onclick="showSection('leaves')">📝 Apply Leave</li>
+                <li onclick="logout()">🚪 Logout</li>
+            </ul>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="content">
+            <header class="topbar">
+                <span id="welcomeMessage">Welcome, Employee</span>
+                <div class="datetime" id="datetime">Loading...</div>
+            </header>
+
+            <!-- DASHBOARD / PROFILE -->
+            <section id="dashboard" class="section active">
+                <div class="section-header">
+                    <h2>My Profile</h2>
+                </div>
+                <div class="cards">
+                    <div class="card">
+                        <h3>Name</h3>
+                        <p id="profileName">Loading...</p>
+                    </div>
+                    <div class="card">
+                        <h3>Email</h3>
+                        <p id="profileEmail">Loading...</p>
+                    </div>
+                    <div class="card">
+                        <h3>Department</h3>
+                        <p id="profileDept">Loading...</p>
+                    </div>
+                    <div class="card">
+                        <h3>Manager</h3>
+                        <p id="profileManager">Loading...</p>
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h2>Quick Stats</h2>
+                </div>
+                <div class="cards">
+                    <!-- Attendance Card -->
+                    <div class="card" style="border-left: 5px solid #e67e22;">
+                        <h3>Today's Attendance</h3>
+                        <p id="attendanceStatus">Loading...</p>
+                        <div style="margin-top: 10px;">
+                            <button id="clockInBtn" onclick="clockIn()" class="primary-btn"
+                                style="display:none; width:100%; justify-content:center; background: #2ecc71;">Clock
+                                In</button>
+                            <button id="clockOutBtn" onclick="clockOut()" class="primary-btn"
+                                style="display:none; width:100%; justify-content:center; background: #e74c3c;">Clock
+                                Out</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>Pending Tasks</h3>
+                        <p id="pendingTasksCount">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Leave Status</h3>
+                        <p id="leaveStatusMsg">No recent applications</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MY DUTIES -->
+            <section id="duties" class="section">
+                <div class="section-header">
+                    <h2>Assigned Tasks</h2>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Task ID</th>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Deadline</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dutiesTable">
+                            <tr>
+                                <td colspan="5" class="loading">
+                                    <div class="spinner"></div>Loading tasks...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- PERFORMANCE -->
+            <section id="performance" class="section">
+                <div class="section-header">
+                    <h2>Performance History</h2>
+                </div>
+                <div class="cards">
+                    <div class="card">
+                        <h3>Average Rating</h3>
+                        <p id="avgRating">0.0 / 5.0</p>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Rating</th>
+                                <th>Feedback</th>
+                                <th>Evaluator</th>
+                            </tr>
+                        </thead>
+                        <tbody id="performanceTable">
+                            <tr>
+                                <td colspan="4" class="loading">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- PAYSLIPS -->
+            <section id="payslips" class="section">
+                <div class="section-header">
+                    <h2>My Payslips</h2>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>Year</th>
+                                <th>Net Salary</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="payslipsTable">
+                            <tr>
+                                <td colspan="4" class="loading">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- LEAVES -->
+            <section id="leaves" class="section">
+                <div class="section-header">
+                    <h2>Leave History</h2>
+                    <button class="primary-btn" onclick="openLeaveModal()">+ Apply For Leave</button>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Leave Type</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leavesTable">
+                            <tr>
+                                <td colspan="5" class="no-data"><i>📝</i>No leave history</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- APPLY LEAVE MODAL -->
+            <div id="leaveModal" class="modal">
+                <div class="modal-content">
+                    <h3>Apply For Leave</h3>
+                    <div class="form-group">
+                        <label>Leave Type:</label>
+                        <select id="leaveType" required>
+                            <option value="Sick Leave">Sick Leave</option>
+                            <option value="Casual Leave">Casual Leave</option>
+                            <option value="Emergency Leave">Emergency Leave</option>
+                        </select>
+                    </div>
+                    <label>From Date:</label>
+                    <input id="leaveFrom" type="date" required>
+                    <label>To Date:</label>
+                    <input id="leaveTo" type="date" required>
+                    <label>Reason:</label>
+                    <textarea id="leaveReason" placeholder="Reason for leave" required></textarea>
+
+                    <div class="modal-actions">
+                        <button onclick="closeLeaveModal()">Cancel</button>
+                        <button class="primary-btn" onclick="submitLeave()">Submit Application</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAYSLIP MODAL -->
+            <div id="payslipModal" class="modal">
+                <div class="modal-content" style="max-width: 400px;">
+                    <h3>Payslip Details</h3>
+                    <div id="payslipDetails" style="font-size: 16px; line-height: 1.8;">
+                        <!-- Details loaded here -->
+                    </div>
+                    <div class="modal-actions">
+                        <button onclick="document.getElementById('payslipModal').style.display='none'"
+                            class="primary-btn">Close</button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+    <script src="js/employee.js"></script>
+    <script>
+        function updateDateTime() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            document.getElementById('datetime').textContent = now.toLocaleDateString('en-IN', options);
+        }
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+    </script>
+</body>
+
+</html>

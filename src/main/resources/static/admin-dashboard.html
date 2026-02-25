@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - EMS</title>
+    <link rel="stylesheet" href="css/admin-dashboard.css">
+</head>
+
+<body>
+
+    <div class="layout">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <h2>EMS Admin</h2>
+            <ul>
+                <li onclick="showSection('dashboard')">Dashboard</li>
+                <li onclick="showSection('managers')">Managers</li>
+                <li onclick="showSection('employees')">Employees</li>
+                <li onclick="showSection('payroll')">Payroll</li>
+                <li onclick="logout()">Logout</li>
+            </ul>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="content">
+
+            <header class="topbar">
+                <span>Welcome, Admin</span>
+            </header>
+
+            <!-- DASHBOARD -->
+            <section id="dashboard" class="section active">
+                <div class="cards">
+                    <div class="card">
+                        <h3>Managers</h3>
+                        <p id="managerCount">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Employees</h3>
+                        <p id="employeeCount">0</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MANAGERS -->
+            <section id="managers" class="section">
+                <div class="section-header">
+                    <h2>Managers</h2>
+                    <button class="primary-btn" onclick="openManagerModal()">+ Add Manager</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Department</th>
+                                <th>Contact</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="managerTable">
+                            <!-- Managers will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- EMPLOYEES -->
+            <section id="employees" class="section">
+                <div class="section-header">
+                    <h2>Employees</h2>
+                    <button class="primary-btn" onclick="openEmployeeModal()">+ Add Employee</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Department</th>
+                                <th>Manager</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employeeTable">
+                            <!-- Employees will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- PAYROLL -->
+            <section id="payroll" class="section">
+                <div class="section-header">
+                    <h2>Payroll Management</h2>
+                </div>
+                <div class="card" style="max-width: 500px; margin: 20px auto;">
+                    <h3>Generate Payslip</h3>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <input type="number" id="pEmpId" placeholder="Employee ID" required>
+                        <select id="pMonth">
+                            <option value="January">January</option>
+                            <option value="February">February</option>
+                            <option value="March">March</option>
+                            <option value="April">April</option>
+                            <option value="May">May</option>
+                            <option value="June">June</option>
+                            <option value="July">July</option>
+                            <option value="August">August</option>
+                            <option value="September">September</option>
+                            <option value="October">October</option>
+                            <option value="November">November</option>
+                            <option value="December">December</option>
+                        </select>
+                        <input type="number" id="pYear" placeholder="Year" value="2026" required>
+                        <button class="primary-btn" onclick="generatePayslip()">Generate Payslip</button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ADD MANAGER MODAL -->
+    <div id="managerModal" class="modal">
+        <div class="modal-content">
+            <h3>Add Manager</h3>
+            <input id="mName" placeholder="Name" required>
+            <input id="mEmail" placeholder="Email" type="email" required>
+            <input id="mDepartment" placeholder="Department" required>
+            <input id="mContact" placeholder="Contact" required>
+
+            <div class="modal-actions">
+                <button onclick="closeManagerModal()">Cancel</button>
+                <button class="primary-btn" onclick="addManager()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD EMPLOYEE MODAL -->
+    <div id="employeeModal" class="modal">
+        <div class="modal-content">
+            <h3>Add Employee</h3>
+            <input id="eName" placeholder="Name" required>
+            <input id="eEmail" placeholder="Email" type="email" required>
+            <input id="eDept" placeholder="Department" required>
+            <input id="eContact" placeholder="Contact" required>
+
+            <select id="eGender" required
+                style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px;">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <input id="eAge" placeholder="Age" type="number" required>
+            <input id="eDesignation" placeholder="Designation" required>
+            <input id="eSalary" placeholder="Salary" type="number" required>
+
+            <div class="modal-actions">
+                <button onclick="closeEmployeeModal()">Cancel</button>
+                <button class="primary-btn" onclick="addEmployee()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/admin-dashboard.js"></script>
+</body>
+
+</html>
